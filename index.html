@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Converter GUI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 300px;
+            text-align: center;
+        }
+        h2 { margin-top: 0; color: #333; }
+        .input-group { margin-bottom: 20px; text-align: left; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; color: #555; }
+        input {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        button:hover { background-color: #004494; }
+        .preview-box {
+            height: 40px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Color Converter</h2>
+
+    <div class="input-group">
+        <label for="hexInput">HEX</label>
+        <input type="text" id="hexInput" placeholder="e.g., #FF5733">
+        <button id="btnToRgb" onclick="convertToRgb()">Convert to RGB ⬇️</button>
+    </div>
+
+    <div class="input-group">
+        <label for="rgbInput">RGB</label>
+        <input type="text" id="rgbInput" placeholder="e.g., 255, 87, 51">
+        <button id="btnToHex" onclick="convertToHex()">Convert to HEX ⬆️</button>
+    </div>
+
+    <div class="preview-box" id="colorPreview"></div>
+</div>
+
+<script>
+    // HEX to RGB
+    function convertToRgb() {
+        const hex = document.getElementById('hexInput').value;
+        let clean = hex.replace('#', '').trim();
+        
+        if (clean.length === 3) {
+            clean = clean.split('').map(c => c + c).join('');
+        }
+        
+        if (clean.length !== 6 || !/^[0-9A-Fa-f]{6}$/.test(clean)) {
+            alert("Invalid HEX format!");
+            return;
+        }
+
+        const r = parseInt(clean.substring(0, 2), 16);
+        const g = parseInt(clean.substring(2, 4), 16);
+        const b = parseInt(clean.substring(4, 6), 16);
+
+        document.getElementById('rgbInput').value = `${r}, ${g}, ${b}`;
+        updatePreview(r, g, b);
+    }
+
+    // RGB to HEX
+    function convertToHex() {
+        const rgb = document.getElementById('rgbInput').value.split(',');
+        if (rgb.length !== 3) {
+            alert("Please enter RGB in format: 255, 87, 51");
+            return;
+        }
+
+        const r = parseInt(rgb[0].trim());
+        const g = parseInt(rgb[1].trim());
+        const b = parseInt(rgb[2].trim());
+
+        if (isNaN(r) || isNaN(g) || isNaN(b) || r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+            alert("RGB values must be numbers between 0 and 255");
+            return;
+        }
+
+        const hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1).toUpperCase();
+        document.getElementById('hexInput').value = hex;
+        updatePreview(r, g, b);
+    }
+
+    // Update color preview
+    function updatePreview(r, g, b) {
+        document.getElementById('colorPreview').style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
+    }
+</script>
+
+</body>
+</html>
